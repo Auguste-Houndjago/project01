@@ -227,3 +227,137 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+
+
+##recuperation d utilisateur
+nececite des permision pour l accet a select 
+
+  // useEffect(() => {
+  //   const fetchPlayers = async () => {
+  //     try {
+  //       const { data, error } = await supabase.from("Player").select("*");
+  //       if (error) throw error;
+
+  //       console.log("Players retrieved:", data); 
+  //       setPlayers(data); 
+  //     } catch (err) {
+  //       console.error("Error fetching players:", err);
+  //     } finally {
+  //       setLoading(false); 
+  //     }
+  //   };
+
+  //   fetchPlayers();
+  // }, []);
+
+
+  ##userProfile informations
+
+'use client'
+
+import useAuth from '@/hooks/useAuth';
+
+const ProfileInfo = () => {
+  const { user, signOut, updateUserMetadata, getUserRoles, loading } = useAuth();
+
+  if (loading) return <p>Loading...</p>;
+
+  const handleUpdateUsername = async () => {
+    await updateUserMetadata({ username: 'NewUsername' });
+    alert('Username updated!');
+  };
+
+  const roles = getUserRoles();
+
+  return (
+    <div>
+      <h1>Welcome, {user?.email}</h1>
+      <p>Your roles: {roles.join(' , ')}</p>
+      <button onClick={handleUpdateUsername}>Update Username</button>
+      <button onClick={signOut} className='text-base font-bold mx-2'> Logout</button>
+    </div>
+  );
+};
+
+export default ProfileInfo;
+
+
+
+  'use client'
+
+import { useState, useEffect } from 'react';
+import useAuth from '@/hooks/useAuth';
+import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs';
+
+const ProfileInfo = () => {
+  const { user, signOut, updateUserMetadata, getUserRoles, loading } = useAuth();
+  const [userData, setUserData] = useState<any>(null); 
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+
+      const supabase = createBrowserSupabaseClient();
+      const { data: session } = await supabase.auth.getSession();
+    
+      if (!session) {
+        throw new Error('User not authenticated');
+      }
+
+      try {
+        const response = await fetch('/api/users/details'); // Appel de l'API pour récupérer les données
+        if (!response.ok) {
+          throw new Error('Erreur lors de la récupération des données utilisateur.');
+        }
+        const data = await response.json();
+        setUserData(data);
+      } catch (err: any) {
+        setError(err.message);
+      }
+    };
+
+    if (user) fetchUserData();
+  }, [user]);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+
+  const handleUpdateUsername = async () => {
+    await updateUserMetadata({ username: 'NewUsername' });
+    alert('Username updated!');
+  };
+
+  const roles = getUserRoles();
+
+  return (
+    <div>
+      <h1>Welcome, {user?.email}</h1>
+      <p>Your roles: {roles.join(', ')}</p>
+      <button onClick={handleUpdateUsername}>Update Username</button>
+      <button onClick={signOut} className="text-base font-bold mx-2">Logout</button>
+
+      {userData && (
+        <div className="mt-4">
+          <h2>Details:</h2>
+          <p><strong>Name:</strong> {userData.manager?.firstName} {userData.manager?.lastName}</p>
+          <p><strong>Team:</strong> {userData.manager?.team?.name || 'No team assigned'}</p>
+          <p><strong>Players:</strong></p>
+          <ul>
+            {userData.manager?.players?.length > 0 ? (
+              userData.manager.players.map((player: any) => (
+                <li key={player.id}>
+                  {player.firstName} {player.lastName} - {player.position}
+                </li>
+              ))
+            ) : (
+              <p>No players assigned</p>
+            )}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ProfileInfo;

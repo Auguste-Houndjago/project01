@@ -1,28 +1,44 @@
-"use client"
-
-import { useState } from "react"
-import { PlayerCard } from "@/components/players/player-card"
-import { PlayerFilters } from "@/components/players/player-filters"
-import { Button } from "@/components/ui/button"
-import { PlusCircle } from "lucide-react"
-import { AddPlayerDialog } from "@/components/players/add-player-dialog"
-import Loader from "@/components/ux/FootLoader"
-
-export const players=
-  {
-    id: "1",
-    firstName: "joeur ",
-    lastName: "special",
-    position: "GK",
-    jerseyNumber: 2,
-    profileImage: "",
-    nationality: "togolaise"
-  }
-
-
+'use client'
+import { useState, useEffect } from "react";
+import { createClient } from "@supabase/supabase-js";
+import { PlayerCard } from "@/components/players/player-card";
+import { Button } from "@/components/ui/button";
+import { PlusCircle } from "lucide-react";
+import { AddPlayerDialog } from "@/components/players/add-player-dialog";
+import Loader from "@/components/ux/FootLoader";
+import { Player } from "@prisma/client";
+import { supabase } from "@/lib/supabaseClient";
+import PlayerList from "@/components/players/PlayerList";
 
 export default function PlayersPage() {
-  const [showAddDialog, setShowAddDialog] = useState(false)
+  const [players, setPlayers] = useState<Player[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showAddDialog, setShowAddDialog] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+
+
+  useEffect(() => {
+    const fetchPlayers = async () => {
+      try {
+        const response = await fetch("/api/players");
+
+        if (!response.ok) {
+          throw new Error(`Erreur: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        setPlayers(data);
+      } catch (err: any) {
+        console.error("Erreur lors de la récupération des joueurs :", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPlayers();
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -34,16 +50,21 @@ export default function PlayersPage() {
         </Button>
       </div>
 
-      <PlayerFilters />
+      {loading ? (
+        <Loader />
+      ) : players.length > 0 ? (
+        // grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 div style
+        <div className="grid  gap-6">
+          {/* {players.map((player) => (
+            <PlayerCard key={player.id} player={player} />
+          ))} */}
+          <PlayerList/>
+        </div>
+      ) : (
+        <p>Aucun joueur disponible.</p>
+      )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {/* Les cartes des joueurs seront mappées ici */}
-        <PlayerCard player={players}/>
-      </div>
-
-   
-<Loader/>
       <AddPlayerDialog open={showAddDialog} onOpenChange={setShowAddDialog} />
     </div>
-  )
+  );
 }

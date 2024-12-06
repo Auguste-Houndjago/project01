@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -36,18 +34,9 @@ const formSchema = z.object({
   dateOfBirth: z.string(),
   nationality: z.string().min(2, "La nationalité est requise"),
   position: z.enum(["GK", "DF", "MF", "FW"]),
-  jerseyNumber: z
-    .string()
-    .optional()
-    .transform((val) => (val ? parseInt(val, 10) : undefined)),
-  height: z
-    .string()
-    .optional()
-    .transform((val) => (val ? parseFloat(val) : undefined)),
-  weight: z
-    .string()
-    .optional()
-    .transform((val) => (val ? parseFloat(val) : undefined)),
+  jerseyNumber: z.string().transform((val) => parseInt(val, 10)).optional(),
+  height: z.string().transform((val) => parseFloat(val)).optional(),
+  weight: z.string().transform((val) => parseFloat(val)).optional(),
 });
 
 interface AddPlayerDialogProps {
@@ -59,7 +48,8 @@ export function AddPlayerDialog({ open, onOpenChange }: AddPlayerDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
 
-  const managerId = user?.id;
+  // L'email de l'utilisateur est utilisé pour récupérer le managerId dans l'API
+  const userEmail = user?.email;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -76,43 +66,42 @@ export function AddPlayerDialog({ open, onOpenChange }: AddPlayerDialogProps) {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!managerId) {
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Impossible d'ajouter le joueur sans manager.",
-      });
-      return;
-    }
-
     try {
       setIsLoading(true);
 
-      // Envoyer les données au backend
+
       const response = await fetch("/api/players", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...values, managerId }),
+        body: JSON.stringify({
+          ...values,
+          userEmail, 
+        }),
       });
 
-      if (!response.ok) {
-        throw new Error("Erreur lors de l'ajout du joueur");
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Joueur ajouté",
+          description: "Le joueur a été ajouté avec succès",
+        });
+        onOpenChange(false);
+        form.reset();
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Erreur",
+          description: data.error || "Une erreur est survenue lors de l'ajout du joueur",
+        });
       }
-
-      toast({
-        title: "Joueur ajouté",
-        description: "Le joueur a été ajouté avec succès.",
-      });
-
-      onOpenChange(false);
-      form.reset();
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Erreur",
-        description: "Une erreur est survenue lors de l'ajout du joueur.",
+        description: "Une erreur est survenue lors de l'ajout du joueur",
       });
     } finally {
       setIsLoading(false);
@@ -207,7 +196,7 @@ export function AddPlayerDialog({ open, onOpenChange }: AddPlayerDialogProps) {
               name="jerseyNumber"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Numéro</FormLabel>
+                  <FormLabel>Numéro de maillot</FormLabel>
                   <FormControl>
                     <Input type="number" {...field} />
                   </FormControl>
@@ -215,40 +204,13 @@ export function AddPlayerDialog({ open, onOpenChange }: AddPlayerDialogProps) {
                 </FormItem>
               )}
             />
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="height"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Taille (cm)</FormLabel>
-                    <FormControl>
-                      <Input type="number" step="0.01" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="weight"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Poids (kg)</FormLabel>
-                    <FormControl>
-                      <Input type="number" step="0.01" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Ajout en cours..." : "Ajouter le joueur"}
+              
             </Button>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

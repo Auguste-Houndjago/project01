@@ -6,10 +6,7 @@ import { Session } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
 
 
-// const ProfileSession = async () = >{
-// useState
 
-// }
 
 export default function UserProfileTest() {
 

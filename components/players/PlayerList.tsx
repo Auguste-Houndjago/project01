@@ -20,17 +20,15 @@ import { useSortable } from '@dnd-kit/sortable';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2 } from 'lucide-react';
-import { PlayerCard, PlayerCardProps } from './player-card';
-import { players } from '@/app/players/page';
-
-
+import { Player } from '@prisma/client';
+import { PlayerCard } from './player-card';
 
 // => triable card
 const SortablePlayerCard = ({
   player,
   droppedId,
 }: {
-  player: player02;
+  player: Player;
   droppedId: string | null;
 }) => {
   const {
@@ -60,7 +58,7 @@ const SortablePlayerCard = ({
       className={`relative touch-none ${isDropped ? 'card-bounce ' : ''}`}
     >
       <div className={`${isDragging ? 'z-50' : 'z-0'}`}>
-        <PlayerCard player={players} />
+        <PlayerCard player={player} />
       </div>
     </div>
   );
@@ -68,15 +66,30 @@ const SortablePlayerCard = ({
 
 
 export default function PlayerList() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [items, setItems] = useState<player02[]>([]);
+  const [items, setItems] = useState<Player[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [droppedId, setDroppedId] = useState<string | null>(null);
 
   // recup user=> /api/players
   useEffect(() => {
-    setItems(players02)
+    const fetchPlayers = async () => {
+      try {
+        const response = await fetch('/api/players');
+        if (!response.ok) {
+          throw new Error('erreur de chargement des joeurs');
+        }
+        const data = await response.json();
+        setItems(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error fetching players');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPlayers();
   }, []);
 
   // => (drag avec délai)
@@ -174,49 +187,3 @@ export default function PlayerList() {
     </DndContext>
   );
 }
-
-
-
-type player02 = {
-
-    id: string
-    firstName: string
-    lastName: string
-    position: string
-    jerseyNumber?: number
-    profileImage?: string
-    nationality: string
-  
-}
-
-export const players02=[ 
-  {
-    id: "1",
-    firstName: "joeur ",
-    lastName: "special",
-    position: "GK",
-    jerseyNumber: 2,
-    profileImage: "",
-    nationality: "togolaise"
-  },
-  {
-    id: "2",
-    firstName: "joeur tres ",
-    lastName: "special",
-    position: "GK",
-    jerseyNumber: 2,
-    profileImage: "",
-    nationality: "togolaise"
-  },
-  {
-    id: "3",
-    firstName: "Agbota ",
-    lastName: "special",
-    position: "FK",
-    jerseyNumber: 2,
-    profileImage: "",
-    nationality: "togolaise"
-  }
-
-
-]

@@ -1,5 +1,5 @@
 import Github from "@/components/auth/login"
-import ProfilePage from "@/components/auth/ProfileModal"
+import ProfileInfo from "@/components/auth/ProfileModal"
 import UserProfileTest from "@/components/auth/UserProfileTest"
 import { Button } from "@/components/ui/button"
 
@@ -67,7 +67,7 @@ export default function Home() {
         <UserProfileTest/>
       </div>
       <Github/>
-      <ProfilePage/>
+      <ProfileInfo/>
     </div>
   )
 }

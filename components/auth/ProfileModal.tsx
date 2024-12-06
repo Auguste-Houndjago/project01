@@ -2,7 +2,7 @@
 
 import useAuth from '@/hooks/useAuth';
 
-const ProfilePage = () => {
+const ProfileInfo = () => {
   const { user, signOut, updateUserMetadata, getUserRoles, loading } = useAuth();
 
   if (loading) return <p>Loading...</p>;
@@ -24,4 +24,4 @@ const ProfilePage = () => {
   );
 };
 
-export default ProfilePage;
+export default ProfileInfo;
