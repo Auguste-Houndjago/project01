@@ -1,0 +1,222 @@
+// Prisma schema 
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  PLAYER
+}
+
+enum Position {
+  GK  // Goalkeeper
+  DF  // Defender
+  MF  // Midfielder
+  FW  // Forward
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  role          UserRole
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  manager       Manager?   // Si l'utilisateur est un manager
+  admin         Admin?     // Si l'utilisateur est un admin
+  notifications Notification[]
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  adminCode String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model Player {
+  id            String    @id @default(cuid())
+  managerId     String?    // Lié au manager qui gère ce joueur
+  manager       Manager?   @relation(fields: [managerId], references: [id])
+  firstName     String
+  lastName      String
+  dateOfBirth   DateTime
+  nationality   String
+  position      Position
+  jerseyNumber  Int?
+  height        Float?     // en cm
+  weight        Float?     // en kg
+  profileImage  String?    // URL de la photo de profil
+
+  // Relations
+  teamId        String?
+  team          Team?      @relation(fields: [teamId], references: [id])
+  images        Image[]    // Catalogue d'images
+  statistics    Statistics[]
+  injuries      Injury[]
+  contracts     Contract[]
+}
+
+model Manager {
+  id            String    @id @default(cuid())
+  userId        String    @unique
+  user          User      @relation(fields: [userId], references: [id])
+  firstName     String
+  lastName      String
+  dateOfBirth   DateTime
+  nationality   String
+  licenseLevel  String?    // Niveau de licence d'entraîneur
+  profileImage  String?    // URL de la photo de profil
+
+  // Relations
+  teamId        String?    @unique
+  team          Team?      @relation(fields: [teamId], references: [id])
+  players       Player[]   // Un manager peut gérer plusieurs joueurs
+  images        Image[]    // Catalogue d'images
+}
+
+model Team {
+  id            String    @id @default(cuid())
+  name          String
+  logo          String?   // URL du logo
+  country       String
+  league        String
+  founded       Int?      // Année de création
+  stadiumName   String?
+
+  // Relations
+  players       Player[]
+  manager       Manager?
+  trainings     Training[]
+  matches       Match[]
+  gallery       Image[]   // Galerie d'images
+}
+
+model Image {
+  id          String   @id @default(cuid())
+  url         String   // URL de l'image
+  caption     String?  // Description optionnelle
+  createdAt   DateTime @default(now())
+
+  // Relations
+  playerId    String?
+  player      Player?  @relation(fields: [playerId], references: [id])
+  
+  managerId   String?
+  manager     Manager? @relation(fields: [managerId], references: [id])
+  
+  teamId      String?
+  team        Team?    @relation(fields: [teamId], references: [id])
+}
+
+model Statistics {
+  id                String    @id @default(cuid())
+  playerId          String
+  player            Player    @relation(fields: [playerId], references: [id])
+  season            String    // ex: "2023-2024"
+
+  // Stats offensives
+  gamesPlayed       Int       @default(0)
+  goals             Int       @default(0)           // Nombre de buts marqués
+  assists           Int       @default(0)           // Passes décisives
+  shots             Int       @default(0)           // Tirs
+  shotsOnTarget     Int       @default(0)           // Tirs cadrés
+  crosses           Int       @default(0)           // Centres réussis
+
+  // Stats défensives
+  yellowCards       Int       @default(0)           // Cartons jaunes
+  redCards          Int       @default(0)           // Cartons rouges
+  tackles           Int       @default(0)           // Tacles réussis
+  interceptions      Int       @default(0)          // Interceptions
+  clearances        Int       @default(0)           // Dégagements
+
+  // Stats gardien de but (optionnel pour les autres joueurs)
+  saves             Int?      @default(0)           // Arrêts
+  cleanSheets       Int?      @default(0)           // Matchs sans encaisser de but
+  goalsConceded     Int?      @default(0)           // Buts encaissés
+  claimedCrosses    Int?      @default(0)           // Centres captés
+
+  // Stats de possession
+  passes            Int       @default(0)           // Passes réussies
+  passAccuracy      Float     @default(0)           // Taux de précision des passes
+  dribbles          Int       @default(0)           // Dribbles réussis
+  minutesPlayed     Int       @default(0)           // Minutes jouées
+
+  // Stats physiques
+  distance          Float     @default(0)           // Distance parcourue en km
+  sprintSpeed       Float?    // Vitesse max en km/h
+  stamina           Int?      @default(0)           // Endurance sur 100
+
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+
+model Training {
+  id            String    @id @default(cuid())
+  teamId        String
+  team          Team      @relation(fields: [teamId], references: [id])
+  date          DateTime
+  type          String    // ex: "Tactical", "Physical", "Technical"
+  duration      Int       // en minutes
+  description   String?
+  location      String?
+}
+
+model Match {
+  id            String    @id @default(cuid())
+  teamId        String
+  team          Team      @relation(fields: [teamId], references: [id])
+  opponent      String
+  date          DateTime
+  location      String
+  competition   String    // ex: "League", "Cup", "Friendly"
+  result        String?   // ex: "2-1"
+  isHome        Boolean
+}
+
+model Injury {
+  id            String    @id @default(cuid())
+  playerId      String
+  player        Player    @relation(fields: [playerId], references: [id])
+  type          String
+  startDate     DateTime
+  endDate       DateTime?
+  description   String?
+  status        String    // ex: "Active", "Recovered"
+}
+
+model Contract {
+  id            String    @id @default(cuid())
+  playerId      String
+  player        Player    @relation(fields: [playerId], references: [id])
+  startDate     DateTime
+  endDate       DateTime
+  salary        Float
+  bonuses       Json?     // Stockage des bonus en format JSON
+  status        String    // ex: "Active", "Expired", "Terminated"
+}
+
+model Notification {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  title         String
+  message       String
+  type          String    // ex: "Training", "Match", "Injury", "Contract"
+  isRead        Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+}

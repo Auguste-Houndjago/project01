@@ -1,0 +1,265 @@
+
+
+
+
+
+
+
+New manager/[id] route.ts
+
+  export async function PATCH(req: NextRequest) {
+    try {
+      const body = await req.json();
+      const {
+        id,
+        firstName,
+        lastName,
+        dateOfBirth,
+        nationality,
+        licenseLevel,
+        profileImage,
+        teamId,
+      } = body;
+  
+      if (!id) {
+        return NextResponse.json(
+          { error: "L'ID du manager est requis." },
+          { status: 400 }
+        );
+      }
+  
+      const updatedManager = await prisma.manager.update({
+        where: { id },
+        data: {
+          firstName,
+          lastName,
+          dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : undefined,
+          nationality,
+          licenseLevel,
+          profileImage,
+          teamId,
+        },
+      });
+  
+      return NextResponse.json(
+        { message: "Manager mis à jour avec succès.", manager: updatedManager },
+        { status: 200 }
+      );
+    } catch (error) {
+      console.error(error);
+      return NextResponse.json(
+        { error: "Impossible de mettre à jour le manager." },
+        { status: 500 }
+      );
+    }
+  }
+
+  
+  export async function DELETE(req: NextRequest) {
+    const { searchParams } = new URL(req.url);
+    const managerId = searchParams.get("id");
+  
+    if (!managerId) {
+      return NextResponse.json(
+        { error: "L'ID du manager est requis." },
+        { status: 400 }
+      );
+    }
+  
+    try {
+      await prisma.manager.delete({
+        where: { id: managerId },
+      });
+  
+      return NextResponse.json(
+        { message: "Manager supprimé avec succès." },
+        { status: 200 }
+      );
+    } catch (error) {
+      console.error(error);
+      return NextResponse.json(
+        { error: "Impossible de supprimer le manager." },
+        { status: 500 }
+      );
+    }
+  }
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import { prisma } from '@/lib/prisma';  
+import { NextResponse } from 'next/server';
+
+export async function POST(req: Request) {
+  try {
+    const data = await req.json(); 
+    const manager = await prisma.manager.create({
+      data: {
+        userId: data.userId,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        dateOfBirth: new Date(data.dateOfBirth),
+        nationality: data.nationality,
+        licenseLevel: data.licenseLevel,
+        profileImage: data.profileImage,
+      },
+    });
+
+    return NextResponse.json(manager);
+  } catch (error) {
+    console.error('Error creating manager:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}
+
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const userId = searchParams.get('userId');
+
+  if (!userId) {
+    return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
+  }
+
+  try {
+    // Récupérer les informations du manager par `userId`
+    const manager = await prisma.manager.findUnique({
+      where: {
+        userId: String(userId),
+      },
+    });
+
+    if (!manager) {
+      return NextResponse.json({ error: 'Manager not found' }, { status: 404 });
+    }
+
+    return NextResponse.json(manager, { status: 200 });
+  } catch (error) {
+    console.error('Error fetching manager:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}
+
+export async function PUT(req: Request) {
+  const { userId, firstName, lastName, dateOfBirth, nationality, licenseLevel, profileImage } = await req.json();
+
+  if (!userId) {
+    return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
+  }
+
+  try {
+    // Mise à jour du manager avec les nouvelles informations
+    const manager = await prisma.manager.update({
+      where: {
+        userId: userId,
+      },
+      data: {
+        firstName,
+        lastName,
+        dateOfBirth,
+        nationality,
+        licenseLevel,
+        profileImage,
+      },
+    });
+
+    return NextResponse.json(manager, { status: 200 });
+  } catch (error) {
+    console.error('Error updating manager:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const userId = searchParams.get('userId');
+
+  if (!userId) {
+    return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
+  }
+
+  try {
+    // Suppression du manager avec le `userId`
+    const manager = await prisma.manager.delete({
+      where: {
+        userId: String(userId),
+      },
+    });
+
+    return NextResponse.json(manager, { status: 200 });
+  } catch (error) {
+    console.error('Error deleting manager:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}
+
+
+
+
+
+// import { NextResponse } from "next/server"
+// import { prisma } from "@/lib/prisma"
+
+// export async function GET() {
+//   try {
+//     const managers = await prisma.manager.findMany({
+//       include: {
+//         team: true,
+//       },
+//     })
+//     return NextResponse.json(managers)
+//   } catch (error) {
+//     return NextResponse.json(
+//       { error: "Erreur lors de la récupération des managers" },
+//       { status: 500 }
+//     )
+//   }
+// }
+
+// export async function POST(request: Request) {
+//   try {
+//     const json = await request.json()
+//     const manager = await prisma.manager.create({
+//       data: {
+//         firstName: json.firstName,
+//         lastName: json.lastName,
+//         dateOfBirth: new Date(json.dateOfBirth),
+//         nationality: json.nationality,
+//         licenseLevel: json.licenseLevel,
+//         user: {
+//           create: {
+//             email: json.email,
+//             password: json.password, // Note: À hasher avant la production
+//             role: "MANAGER",
+//           },
+//         },
+//       },
+//     })
+//     return NextResponse.json(manager)
+//   } catch (error) {
+//     return NextResponse.json(
+//       { error: "Erreur lors de la création du manager" },
+//       { status: 500 }
+//     )
+//   }
+// }

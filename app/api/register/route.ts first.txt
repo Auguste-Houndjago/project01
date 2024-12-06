@@ -1,0 +1,60 @@
+import { NextRequest, NextResponse } from "next/server";
+import bcrypt from "bcrypt";
+import {prisma} from "@/lib/prisma";
+
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { email, password, role } = body;
+
+    // Validation de base
+    if (!email || !password || !role) {
+      return NextResponse.json(
+        { error: "Email, mot de passe et rôle sont requis." },
+        { status: 400 }
+      );
+    }
+
+    if (! ["ADMIN", "MANAGER"].includes(role)) {
+      return NextResponse.json(
+        { error: "Le rôle doit être ADMIN ou MANAGER." },
+        { status: 400 }
+      );
+    }
+
+    // existing user?
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
+      return NextResponse.json(
+        { error: "Un utilisateur avec cet email existe déjà." },
+        { status: 409 }
+      );
+    }
+
+    // Hacher password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Créer new user
+    const newUser = await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        role,
+      },
+    });
+
+    return NextResponse.json(
+      { message: "Utilisateur créé avec succès.", user: newUser },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { error: "Une erreur est survenue lors de la création de l'utilisateur." },
+      { status: 500 }
+    );
+  }
+}

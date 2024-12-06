@@ -1,0 +1,229 @@
+
+
+
+
+
+erecuperation de l user.admin.id  via l email de l user avec prisma
+
+import { useEffect, useState } from "react";
+
+function AddPlayerDialog({ open, onOpenChange }: AddPlayerDialogProps) {
+  const { user } = useAuth();
+  const [managerId, setManagerId] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    async function fetchManager() {
+      if (user?.email) {
+        try {
+          const response = await fetch(`/api/managers/by-email?email=${user.email}`);
+          const data = await response.json();
+          setManagerId(data.managerId);
+        } catch (error) {
+          console.error("Erreur lors de la récupération du manager :", error);
+        }
+      }
+    }
+    fetchManager();
+  }, [user]);
+
+  return (
+    <>
+      {managerId ? (
+        <div>Manager trouvé : {managerId}</div>
+      ) : (
+        <div>Chargement des données du manager...</div>
+      )}
+      {/* Formulaire ici */}
+    </>
+  );
+}
+
+
+son api 
+extrait
+
+const manager = await prisma.manager.findFirst({
+  where: {
+    user: {
+      email: userEmail, // userEmail est l'email fourni par le contexte ou l'authentification
+    },
+  },
+  include: {
+    user: true, // Inclure les informations utilisateur si nécessaire
+  },
+});
+
+
+##API
+
+import { NextApiRequest, NextApiResponse } from "next";
+import { prisma } from "@/lib/prisma"; // Ajustez le chemin vers votre instance Prisma
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== "GET") {
+    return res.status(405).json({ error: "Méthode non autorisée" });
+  }
+
+  const { email } = req.query;
+  if (!email || typeof email !== "string") {
+    return res.status(400).json({ error: "Email requis" });
+  }
+
+  try {
+    const manager = await prisma.manager.findFirst({
+      where: {
+        user: {
+          email: email,
+        },
+      },
+    });
+
+    if (!manager) {
+      return res.status(404).json({ error: "Manager introuvable" });
+    }
+
+    return res.status(200).json({ managerId: manager.id });
+  } catch (error) {
+    console.error("Erreur lors de la récupération du manager :", error);
+    return res.status(500).json({ error: "Erreur serveur" });
+  }
+}
+
+
+
+
+## ancien api/register/route.ts
+
+import { NextRequest, NextResponse } from "next/server";
+import bcrypt from "bcrypt";
+import {prisma} from "@/lib/prisma";
+
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { email, password, role } = body;
+
+    // Validation de base
+    if (!email || !password || !role) {
+      return NextResponse.json(
+        { error: "Email, mot de passe et rôle sont requis." },
+        { status: 400 }
+      );
+    }
+
+    if (! ["ADMIN", "MANAGER"].includes(role)) {
+      return NextResponse.json(
+        { error: "Le rôle doit être ADMIN ou MANAGER." },
+        { status: 400 }
+      );
+    }
+
+    // existing user?
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
+      return NextResponse.json(
+        { error: "Un utilisateur avec cet email existe déjà." },
+        { status: 409 }
+      );
+    }
+
+    // Hacher password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Créer new user
+    const newUser = await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        role,
+      },
+    });
+
+    return NextResponse.json(
+      { message: "Utilisateur créé avec succès.", user: newUser },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { error: "Une erreur est survenue lors de la création de l'utilisateur." },
+      { status: 500 }
+    );
+  }
+}
+
+
+nouveau api register 01
+
+import { NextRequest, NextResponse } from "next/server";
+import bcrypt from "bcrypt";
+import { prisma } from "@/lib/prisma";
+import { supabaseServer } from "@/lib/supabase";
+
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { email, password, role } = body;
+
+    // Validation de base
+    if (!email || !password || !role) {
+      return NextResponse.json(
+        { error: "Email, mot de passe et rôle sont requis." },
+        { status: 400 }
+      );
+    }
+
+    if (!["ADMIN", "MANAGER"].includes(role)) {
+      return NextResponse.json(
+        { error: "Le rôle doit être ADMIN ou MANAGER." },
+        { status: 400 }
+      );
+    }
+
+
+    // Hachage du mot de passe
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Création de l'utilisateur dans Prisma
+    const newUser = await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        role,
+      },
+    });
+
+    // Création de l'utilisateur dans Supabase Auth
+    const { data: authUser, error: authError } = await supabaseServer.auth.admin.createUser({
+      email,
+      password,
+    });
+
+    if (authError) {
+      console.error(authError);
+      return NextResponse.json(
+        { error: "Erreur lors de la création de l'utilisateur dans Supabase Auth." },
+        { status: 500 }
+      );
+    }
+
+    // Réponse avec succès
+    return NextResponse.json(
+      {
+        message: "Utilisateur créé avec succès.",
+        user: newUser,
+        authUser,
+      },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { error: "Une erreur est survenue lors de la création de l'utilisateur." },
+      { status: 500 }
+    );
+  }
+}
