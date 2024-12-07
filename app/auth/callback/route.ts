@@ -4,7 +4,7 @@ import type { NextRequest } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { supabase } from '@/lib/supabase';
 
-export const handleCallback = async () => {
+ const handleCallback = async () => {
   console.log('handleCallback called');
   const { data: session, error } = await supabase.auth.getSession();
 

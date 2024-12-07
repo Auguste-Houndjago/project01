@@ -75,7 +75,7 @@ export function FootballField({ formation, players, positions, onPlayerDrop }: F
             key={player.id}
             draggable
             onDragStart={(e) => handleDragStart(e, player.id)}
-            className="absolute cursor-move"
+            className="absolute cursor-pointer"
             style={{
               left: `${position.x}%`,
               top: `${position.y}%`,
@@ -83,7 +83,7 @@ export function FootballField({ formation, players, positions, onPlayerDrop }: F
             }}
           >
             <Badge 
-              className="w-10 h-10 rounded-full flex items-center justify-center cursor-move hover:bg-primary"
+              className="w-10 h-10 rounded-full flex items-center justify-center  hover:bg-primary cursor-pointer"
               variant="secondary"
             >
               {player.number}

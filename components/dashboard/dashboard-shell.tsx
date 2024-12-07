@@ -8,7 +8,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Sidebar from "../ux/SideBar";
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
 
   return (
     <div className="flex min-h-screen">
@@ -17,7 +17,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       <Sidebar/>
     
       </div>
-  
+
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
           <Button variant="ghost" className="md:hidden fixed left-4 top-4">
