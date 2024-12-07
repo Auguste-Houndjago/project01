@@ -64,7 +64,7 @@ export default function Home() {
       </div>
       <div>
         {Users && Users.displayName}
-        <UserProfileTest/>
+        {/* <UserProfileTest/> */}
       </div>
       <Github/>
       <ProfileInfo/>

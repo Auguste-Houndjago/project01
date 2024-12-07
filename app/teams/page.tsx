@@ -5,6 +5,7 @@ import { TeamCard } from "@/components/teams/team-card"
 import { Button } from "@/components/ui/button"
 import { PlusCircle } from "lucide-react"
 import { AddTeamDialog } from "@/components/teams/add-team-dialog"
+import Link from "next/link"
 
 export default function TeamsPage() {
   const [showAddDialog, setShowAddDialog] = useState(false)
@@ -19,6 +20,12 @@ export default function TeamsPage() {
         </Button>
       </div>
 
+<Link href={"/managers/dashboard"} className=" flex justify-end">
+<Button className="border-2 ">
+trategie
+</Button>
+
+</Link>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Les cartes des équipes seront mappées ici */}
       </div>

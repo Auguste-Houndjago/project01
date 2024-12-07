@@ -17,7 +17,7 @@ const ProfileInfo = () => {
   return (
     <div>
       <h1>Welcome, {user?.email}</h1>
-      <p>Your roles: {roles.join(' , ')}</p>
+      <p>Your roles: {user?.role}</p>
       <button onClick={handleUpdateUsername}>Update Username</button>
       <button onClick={signOut} className='text-base font-bold mx-2'> Logout</button>
     </div>
