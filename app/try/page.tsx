@@ -1,8 +1,8 @@
-import { AddPlayer } from "@/components/players/AddPlayer";
+
 
 const TestUi = () => {
     return ( <div>
-  
+  <h1>test page</h1>
     </div> );
 }
  
