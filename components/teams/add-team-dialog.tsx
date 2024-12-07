@@ -47,7 +47,7 @@ export function AddTeamDialog({ open, onOpenChange }: AddTeamDialogProps) {
       country: "",
       league: "",
       stadiumName: "",
-      founded: "",
+      founded: 1,
     },
   })
 
