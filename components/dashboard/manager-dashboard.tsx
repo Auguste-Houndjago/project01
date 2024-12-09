@@ -64,7 +64,7 @@ export function ManagerDashboard() {
         <RecentMatches className="col-span-3" />
       </div>
 
-      <PlayerStats />
+    
     </div>
   );
 }

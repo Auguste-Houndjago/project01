@@ -18,7 +18,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     
       </div>
 
-      {/* <Sheet open={open} onOpenChange={setOpen}>
+      <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild className="flex justify-end">
           <Button variant="default" className=" z-50 fixed left-4 bottom-4">
             <PlusCircle className="h-6 w-6" /> 
@@ -30,7 +30,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           <h2>le terrain n est pas encore assez esthetique </h2>
          </div>
         </SheetContent>
-      </Sheet> */}
+      </Sheet>
 
  
       <div className="flex-1 p-8">{children}</div>
