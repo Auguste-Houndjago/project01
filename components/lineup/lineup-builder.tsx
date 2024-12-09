@@ -13,7 +13,7 @@ import { Position } from "@prisma/client";
 
 interface Player {
   id: string;
-  name: string;
+  firstName: string;
   position: Position;
   jerseyNumber: number;
 }
@@ -84,7 +84,7 @@ export function LineupBuilder() {
                   <div key={player.id} className="flex items-center justify-between p-2 border rounded">
                     <div className="flex items-center gap-2">
                       <Badge variant="outline">{player.jerseyNumber}</Badge>
-                      <span>{player.name}</span>
+                      <span>{player.firstName}</span>
                     </div>
                     <Button
                       variant="ghost"
@@ -107,7 +107,7 @@ export function LineupBuilder() {
         <CardHeader>
           <CardTitle>Field Setup</CardTitle>
         </CardHeader>
-        <CardContent className="px-14 ">
+        <CardContent className="xl:px-10 ">
           <FootballField 
             formation={selectedFormation}
             players={selectedPlayers}

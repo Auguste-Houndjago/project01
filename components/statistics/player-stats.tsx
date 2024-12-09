@@ -18,7 +18,7 @@ import {
 
 export function PlayerStats() {
   return (
-    <div className="grid gap-6">
+    <div className="grid gap-6 ">
       <Card>
         <CardHeader>
           <CardTitle>Statistiques des Joueurs</CardTitle>

@@ -1,6 +1,7 @@
 import { PlayerStats } from "@/components/dashboard/player-stats";
 import PlayerProfile from "@/components/players/PlayerProfile";
 import ApiTry from "@/components/try/ApiTry";
+import PlayersPage from "@/components/try/PlayerRelation";
 
 
 const TestUi = () => {
@@ -13,6 +14,8 @@ const TestUi = () => {
   </div>
 
   <ApiTry/>
+
+  <PlayersPage/>
     </div> );
 }
  

@@ -9,16 +9,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Player } from "@prisma/client";
+import { Player, Statistics } from "@prisma/client";
 import { useEffect, useState } from "react";
 
 export function PlayerStats() {
   const [players, setPlayers] = useState<Player[]>([]);
+
   const [loading, setLoading] = useState(true);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [error, setError] = useState<string | null>(null);
 const [playerId, setplayerId] = useState();
-
+const [stats, setstats] = useState<Statistics>();
 
   useEffect(() => {
     const fetchPlayers = async () => {
@@ -52,7 +53,7 @@ const [playerId, setplayerId] = useState();
         }
 
         const data = await response.json();
-        setPlayers(data);
+        setstats(data);
       } catch (err: any) {
         console.error("Erreur lors de la récupération des joueurs :", err);
         setError(err.message);
@@ -75,10 +76,10 @@ const [playerId, setplayerId] = useState();
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Position</TableHead>
+              <TableHead>nationality</TableHead>
               <TableHead>Games</TableHead>
               <TableHead>Goals</TableHead>
               <TableHead>Assists</TableHead>
-              <TableHead>Rating</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -86,10 +87,10 @@ const [playerId, setplayerId] = useState();
               <TableRow key={index}>
                 <TableCell className="font-medium">{player.firstName} {player.lastName} </TableCell>
                 <TableCell>{player.position}</TableCell>
-                <TableCell>{player.height}</TableCell>
-                <TableCell>{player.weight}</TableCell>
-                <TableCell>{player.jerseyNumber}</TableCell>
                 <TableCell>{player.nationality}</TableCell>
+                <TableCell>{player.height}   </TableCell>
+                <TableCell>{stats?.goals}</TableCell>
+                <TableCell>{stats?.assists}</TableCell>
               </TableRow>
             ))}
           </TableBody>

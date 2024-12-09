@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     const stats = await prisma.statistics.findMany({
-      include: { player: true }, // Inclure les informations du joueur
+      include: { player: true }, 
     });
 
     return NextResponse.json(stats, { status: 200 });

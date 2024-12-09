@@ -14,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Player, Statistics } from '@prisma/client';
 import Image from 'next/image';
+import Loader from '../ux/FootLoader';
 
 interface PlayerStatisticsProps {
   playerId: string;
@@ -46,9 +47,9 @@ const PlayerStatistics: React.FC<PlayerStatisticsProps> = ({ playerId }) => {
     fetchData();
   }, [playerId]);
 
-  if(!stats) return <div>stats...</div>;
+  if(!stats) return <div><Loader/> </div>;
 
-  if (!player || !stats) return <div>Loading...</div>;
+  if (!player || !stats) return <div> <Loader/> </div>;
 
   const performanceData = [
     { name: 'Goals', value: stats.goals },

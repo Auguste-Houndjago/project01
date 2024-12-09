@@ -99,7 +99,7 @@ export function AddManagerDialog({ open, onOpenChange }: AddManagerDialogProps) 
           <DialogTitle>Ajouter un manager</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="">
             <FormField
               control={form.control}
               name="email"

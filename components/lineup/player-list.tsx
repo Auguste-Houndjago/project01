@@ -9,7 +9,7 @@ import { Position } from "@prisma/client";
 
 interface Player {
   id: string;
-  name: string;
+  firstName: string;
   position: Position;
   jerseyNumber: number;
 }
@@ -54,7 +54,7 @@ export function PlayerList({ onPlayerSelect, selectedPlayers }: PlayerListProps)
                 <div className="flex items-center gap-2">
                   <Badge variant="outline">{player.jerseyNumber}</Badge>
                   <div>
-                    <p className="font-medium">{player.name}</p>
+                    <p className="font-medium">{player.firstName}</p>
                     <p className="text-sm text-muted-foreground">{player.position}</p>
                   </div>
                 </div>

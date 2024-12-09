@@ -8,7 +8,7 @@ import { Users } from "lucide-react";
 
 interface Player {
   id: string;
-  name: string;
+  firstName: string;
   position: Position;
   jerseyNumber: number;
 }

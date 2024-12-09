@@ -1,6 +1,6 @@
 'use client'
 
-import { getAllStatistics } from "@/lib/constants";
+
 import { getAllPlayers } from "@/lib/constants";
 import { Player, Statistics } from "@prisma/client";
 import { createContext, useContext, useEffect, useState } from 'react';
@@ -24,13 +24,12 @@ const [statistics, setstatistics] = useState<Statistics[]>([]);
 useEffect(() => {
  const fetchData = async ()=>{
     const playersData = await getAllPlayers();
-    const statisticsData = await getAllStatistics();
+    // const statisticsData = await getAllStatistics();
 
     setplayers(playersData);
-    setstatistics(statisticsData)
+    // setstatistics(statisticsData)
 
-setplayers(playersData)
-setstatistics(statisticsData)
+
  }   
 
 

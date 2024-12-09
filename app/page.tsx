@@ -7,6 +7,7 @@ import { Trophy, Users, Calendar, Activity } from "lucide-react"
 import Link from "next/link"
 
 
+
 export default function Home() {
 
   const features = [
@@ -63,15 +64,9 @@ export default function Home() {
         ))}
       </div>
       <div>
-        <Link href="/managers/dashboard">
-          <Button>
-            <Trophy className="mr-2 h-4 w-4" />   
 
-            </Button>
 
-         </Link>   
-        {Users && Users.displayName}
-        {/* <UserProfileTest/> */}
+  
       </div>
       <Github/>
       <ProfileInfo/>

@@ -9,6 +9,7 @@ import Loader from "@/components/ux/FootLoader";
 import { Player } from "@prisma/client";
 import { supabase } from "@/lib/supabaseClient";
 import PlayerList from "@/components/players/PlayerList";
+import { PlayerFilters } from "@/components/players/player-filters";
 
 export default function PlayersPage() {
   const [players, setPlayers] = useState<Player[]>([]);
@@ -49,6 +50,9 @@ export default function PlayersPage() {
           Ajouter un joueur
         </Button>
       </div>
+      <div>
+        <PlayerFilters/>
+      </div>
 
       {loading ? (
         <Loader /> 
@@ -59,13 +63,13 @@ export default function PlayersPage() {
           {/* {players.map((player) => (
             <PlayerCard key={player.id} player={player} />
           ))} */}
+
           <PlayerList/>
-          <div>
-            <h1>players list</h1>
+          {/* <div>
+            <h1>players list:</h1>
             <ul>
               {players.map((player)=>(
                   <li>
-                  joueurs {player.id} 
                   <span> {player.firstName} </span>
                   </li>
               ))}
@@ -73,7 +77,7 @@ export default function PlayersPage() {
 
               </li>
             </ul>
-          </div>
+          </div> */}
         </div>
       ) : (
         <p>Aucun joueur disponible.</p>

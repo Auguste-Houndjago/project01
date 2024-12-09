@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { User, AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
+import { UserRole } from '@prisma/client';
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
@@ -109,10 +110,13 @@ export function useAuth() {
     }
   };
 
-  // Récupérer les rôles ou permissions (exemple basé sur des métadonnées utilisateur)
+
   const getUserRoles = () => {
     return user?.user_metadata?.roles || [];
   };
+
+
+  
 
   return {
     user,
@@ -128,3 +132,28 @@ export function useAuth() {
 }
 
 export default useAuth;
+
+
+
+// export function useUserRoles(user: User | null) {
+//   const [roles, setRoles] = useState<UserRole>()
+
+//   useEffect(() => {
+//     if (!user) return
+
+//     const fetchRoles = async () => {
+//       try {
+//         const response = await fetch(`/api/getUserRoles?userId=${user.id}`)
+//         const data = await response.json()
+
+//         setRoles(data)
+//       } catch (error) {
+//         console.error('Failed to fetch user roles:', error)
+//       }
+//     }
+
+//     fetchRoles()
+//   }, [user])
+
+//   return roles
+// }

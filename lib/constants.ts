@@ -6,13 +6,13 @@ export const getAllPlayers = async () => {
     return res.json();
   };
   
-  export const getAllStatistics = async () => {
-    const res = await fetch(`/api/statistics`);
-    if (!res.ok) {
-      throw new Error("Failed to fetch statistics");
-    }
-    return res.json();
-  };
+  // export const getAllStatistics = async () => {
+  //   const res = await fetch(`/api/players/statistics`);
+  //   if (!res.ok) {
+  //     throw new Error("Failed to fetch statistics");
+  //   }
+  //   return res.json();
+  // };
   
 
 

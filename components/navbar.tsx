@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -11,12 +11,15 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
-import { MoonIcon, SunIcon, Users, Trophy, Calendar, Activity } from "lucide-react"
+import { MoonIcon, SunIcon, Users, Trophy, Calendar, Activity, User } from "lucide-react"
 import { useTheme } from "next-themes"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
+import { FaUserCog } from "react-icons/fa";
 
 export default function Navbar() {
   const pathname = usePathname()
   const { setTheme, theme } = useTheme()
+  const router = useRouter();
 
   const routes = [
     {
@@ -42,8 +45,8 @@ export default function Navbar() {
   ]
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center">
+    <header className="sticky  top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container gap-x-2 flex h-14 items-center">
         <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem>
@@ -60,18 +63,46 @@ export default function Navbar() {
                     className={cn(
                       navigationMenuTriggerStyle(),
                       pathname === route.href &&
-                        "bg-accent text-accent-foreground"
+                        "bg-accent text-accent-foreground", "align-middle text-center"
                     )}
                   >
                     <route.icon className="mr-2 h-4 w-4" />
-                    {route.label}
+                    <span className="hidden md:inline">{route.label} </span>
+                    
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
             ))}
           </NavigationMenuList>
         </NavigationMenu>
-        <div className="ml-auto flex items-center space-x-4">
+
+        <div className="ml-auto md:max-w-auto max-w-md flex items-center mx-2 space-x-4">
+         
+
+          <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="icon">
+        <FaUserCog />
+          
+         
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => router.push('/register')}>
+    
+              register
+
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => router.push('/SignIn')}>
+    
+              Login
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() =>router.push('#')}>
+          setting
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  
           <Button
             variant="ghost"
             size="icon"

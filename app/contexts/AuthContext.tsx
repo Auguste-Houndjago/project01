@@ -4,6 +4,7 @@
 import { createContext, useContext, useEffect, useMemo, ReactNode } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { User } from '@supabase/supabase-js'
+import { UserRole } from '@prisma/client'
 
 
 interface UserRoles {
@@ -15,12 +16,14 @@ interface UserRoles {
 
 interface AuthContextType extends UserRoles {
   user: User | null
+  // role: UserRole | null | undefined
   loading: boolean
   signIn: (provider: 'github' | 'google') => Promise<void>
   signInWithEmail: (email: string, password: string) => Promise<void>
   signUpWithEmail: (email: string, password: string, username: string) => Promise<void>
   signOut: () => Promise<void>
   checkAccess: (allowedRoles: string[]) => boolean
+  
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -28,6 +31,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: { children: ReactNode }) {
   const auth = useAuth()
   const { user, loading } = auth
+  // const role = useUserRoles(user)
 
   // Vérification des rôles basée sur les metadata de l'utilisateur
   const roles = useMemo(() => {
@@ -57,10 +61,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return allowedRoles.includes(userRole)
   }
 
-  //=> Valeur du contexte
+
   const value = {
     ...auth,
     ...roles,
+  
     checkAccess
   }
 
@@ -72,7 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
-// Hook personnalisé pour utiliser le contexte
+
 export function useAuthContext() {
   const context = useContext(AuthContext)
   if (context === undefined) {

@@ -22,7 +22,7 @@ export default function TeamsPage() {
 
 <Link href={"/managers/dashboard"} className=" flex justify-end">
 <Button className="border-2 ">
-trategie
+strategie
 </Button>
 
 </Link>
