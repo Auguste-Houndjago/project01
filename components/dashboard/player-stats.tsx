@@ -63,7 +63,7 @@ const [stats, setstats] = useState<Statistics>();
     };
 
     fetchStats();
-  }, []);
+  }, [playerId]);
 
   return (
     <Card>
