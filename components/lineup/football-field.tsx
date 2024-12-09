@@ -4,6 +4,7 @@ import { useMemo } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Position } from "@prisma/client";
+import MiniFootballField from "../ux/minifootball";
 
 interface Player {
   id: string;
@@ -64,6 +65,7 @@ export function FootballField({ formation, players, positions, onPlayerDrop }: F
       <div className="absolute left-0 right-0 top-1/2 h-px bg-white/50" />
       <div className="absolute left-1/2 top-0 bottom-0 w-px bg-white/50" />
       <div className="absolute left-1/2 top-1/2 w-[150px] h-[150px] -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-red-500/50" />
+
 
       {/* Players */}
       {players.map((player) => {
