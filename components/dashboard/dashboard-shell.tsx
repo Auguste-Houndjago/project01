@@ -20,12 +20,12 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
 
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
-          <Button variant="ghost" className="md:hidden fixed left-4 top-4">
-            <MenuIcon className="h-6 w-6" />
+          <Button variant="ghost" className=" z-50 fixed left-4 top-10">
+            <MenuIcon className="h-6 w-6" /> 
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="p-0">
-          <DashboardNav />
+         
         </SheetContent>
       </Sheet>
 
