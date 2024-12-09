@@ -63,6 +63,13 @@ export default function Home() {
         ))}
       </div>
       <div>
+        <Link href="/managers/dashboard">
+          <Button>
+            <Trophy className="mr-2 h-4 w-4" />   
+
+            </Button>
+
+         </Link>   
         {Users && Users.displayName}
         {/* <UserProfileTest/> */}
       </div>

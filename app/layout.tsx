@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/toaster'
 
 import Navbar from '@/components/navbar'
 import { AuthProvider } from './contexts/AuthContext'
+import PlayerProvider from './contexts/PlayersContext'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -28,6 +29,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
+            <PlayerProvider>
             <div className="min-h-screen bg-background">
               <Navbar />
               <main className="container mx-auto px-4 py-8">
@@ -35,6 +37,7 @@ export default function RootLayout({
               </main>
             </div>
             <Toaster />
+            </PlayerProvider>
           </ThemeProvider>
         </AuthProvider>
       </body>

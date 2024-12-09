@@ -1,33 +1,18 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Position } from "@prisma/client";
 
-
 interface Player {
   id: string;
   name: string;
   position: Position;
-  number: number;
+  jerseyNumber: number;
 }
-
-
-const AVAILABLE_PLAYERS: Player[] = [
-  { id: "1", name: "Komi Etru", position: "GK", number: 1 },
-  { id: "2", name: "Gigi Tacleur", position: "DF", number: 4 },
-  { id: "3", name: "casse jambe", position: "DF", number: 5 },
-  { id: "4", name: "messie mesiano", position: "MF", number: 8 },
-  { id: "5", name: "Robert Davis", position: "FW", number: 9 },
-  { id: "6", name: "Michael robert", position: "MF", number: 10 },
-  { id: "7", name: "Daniel Taylor", position: "DF", number: 2 },
-  { id: "8", name: "agbota Anderson", position: "FW", number: 11 },
-  { id: "9", name: "prepre special", position: "MF", number: 6 },
-  { id: "10", name: "Thomas Garcia", position: "DF", number: 3 },
-  { id: "11", name: "miltraillette petit", position: "GK", number: 13 },
-];
 
 interface PlayerListProps {
   onPlayerSelect: (player: Player) => void;
@@ -35,8 +20,23 @@ interface PlayerListProps {
 }
 
 export function PlayerList({ onPlayerSelect, selectedPlayers }: PlayerListProps) {
-  const isPlayerSelected = (playerId: string) => 
-    selectedPlayers.some(p => p.id === playerId);
+  const [players, setPlayers] = useState<Player[]>([]); 
+  const isPlayerSelected = (playerId: string) =>
+    selectedPlayers.some((p) => p.id === playerId);
+
+  useEffect(() => {
+    const fetchPlayers = async () => {
+      try {
+        const response = await fetch("/api/players"); 
+        const data = await response.json();
+        setPlayers(data); 
+      } catch (error) {
+        console.error("Erreur lors de la récupération des joueurs :", error);
+      }
+    };
+
+    fetchPlayers();
+  }, []); 
 
   return (
     <Card>
@@ -46,13 +46,13 @@ export function PlayerList({ onPlayerSelect, selectedPlayers }: PlayerListProps)
       <CardContent>
         <ScrollArea className="h-[400px] pr-4">
           <div className="space-y-2">
-            {AVAILABLE_PLAYERS.map((player) => (
+            {players.map((player) => (
               <div
                 key={player.id}
                 className="flex items-center justify-between p-2 border rounded hover:bg-accent"
               >
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline">{player.number}</Badge>
+                  <Badge variant="outline">{player.jerseyNumber}</Badge>
                   <div>
                     <p className="font-medium">{player.name}</p>
                     <p className="text-sm text-muted-foreground">{player.position}</p>

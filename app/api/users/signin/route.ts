@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Recherche de l'utilisateur dans la base de données
+    // find => (user)
     const user = await prisma.user.findUnique({
       where: { email },
     });
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
         role: user.role,
       },
       SECRET_KEY,
-      { expiresIn: "1h" } // Jeton valide pour 1 heure
+      { expiresIn: "1h" } 
     );
 
     return NextResponse.json({

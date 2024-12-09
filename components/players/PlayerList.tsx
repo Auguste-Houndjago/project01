@@ -22,6 +22,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2 } from 'lucide-react';
 import { Player } from '@prisma/client';
 import { PlayerCard } from './player-card';
+import Loader from '../ux/FootLoader';
 
 // => triable card
 const SortablePlayerCard = ({
@@ -133,9 +134,10 @@ export default function PlayerList() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
+      // <div className="flex justify-center items-center h-64">
+      //   <Loader2 className="h-8 w-8 animate-spin hidden" />
+      // </div>
+      <Loader/>
     );
   }
 

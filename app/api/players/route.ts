@@ -26,15 +26,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Récupérer l'utilisateur basé sur l'email
+
     const user = await prisma.user.findUnique({
       where: { email: userEmail },
       include: {
-        manager: true, // Inclure le manager associé à l'utilisateur
+        manager: true, 
       },
     });
 
-    // Si l'utilisateur n'est pas trouvé ou n'a pas de manager, renvoyer une erreur
+
     if (!user || !user.manager) {
       return NextResponse.json(
         { error: "Aucun manager associé à cet utilisateur." },

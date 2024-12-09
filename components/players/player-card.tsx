@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { User } from "lucide-react";
+import Link from "next/link";
 
 // Mise à jour des types pour correspondre au schéma Prisma
 export interface PlayerCardProps {
@@ -28,6 +29,7 @@ export function PlayerCard({ player }: PlayerCardProps) {
   return (
     <Card className="hover:shadow-lg transition-shadow">
       <CardHeader className="flex flex-row items-center gap-4">
+        <Link href={`/players/${player.id}`} className="hover:scale-105 transition-all">
         <Avatar className="h-16 w-16">
           {/* Gestion de l'image par défaut si profileImage est null */}
           <AvatarImage
@@ -38,6 +40,7 @@ export function PlayerCard({ player }: PlayerCardProps) {
             <User className="h-8 w-8" />
           </AvatarFallback>
         </Avatar>
+        </Link>
         <div>
           <h3 className="font-semibold text-lg">
             {player.firstName} {player.lastName}

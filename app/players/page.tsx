@@ -51,7 +51,8 @@ export default function PlayersPage() {
       </div>
 
       {loading ? (
-        <Loader />
+        <Loader /> 
+   
       ) : players.length > 0 ? (
         // grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 div style
         <div className="grid  gap-6">
@@ -59,6 +60,20 @@ export default function PlayersPage() {
             <PlayerCard key={player.id} player={player} />
           ))} */}
           <PlayerList/>
+          <div>
+            <h1>players list</h1>
+            <ul>
+              {players.map((player)=>(
+                  <li>
+                  joueurs {player.id} 
+                  <span> {player.firstName} </span>
+                  </li>
+              ))}
+              <li>
+
+              </li>
+            </ul>
+          </div>
         </div>
       ) : (
         <p>Aucun joueur disponible.</p>

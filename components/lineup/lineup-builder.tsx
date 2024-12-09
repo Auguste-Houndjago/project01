@@ -15,7 +15,7 @@ interface Player {
   id: string;
   name: string;
   position: Position;
-  number: number;
+  jerseyNumber: number;
 }
 
 const FORMATIONS = {
@@ -83,7 +83,7 @@ export function LineupBuilder() {
                 {selectedPlayers.map((player) => (
                   <div key={player.id} className="flex items-center justify-between p-2 border rounded">
                     <div className="flex items-center gap-2">
-                      <Badge variant="outline">{player.number}</Badge>
+                      <Badge variant="outline">{player.jerseyNumber}</Badge>
                       <span>{player.name}</span>
                     </div>
                     <Button

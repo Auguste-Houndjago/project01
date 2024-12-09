@@ -9,7 +9,7 @@ interface Player {
   id: string;
   name: string;
   position: Position;
-  number: number;
+  jerseyNumber: number;
 }
 
 interface FootballFieldProps {
@@ -86,7 +86,7 @@ export function FootballField({ formation, players, positions, onPlayerDrop }: F
               className="w-10 h-10 rounded-full flex items-center justify-center  hover:bg-primary cursor-pointer"
               variant="secondary"
             >
-              {player.number}
+              {player.jerseyNumber}
             </Badge>
           </div>
         );

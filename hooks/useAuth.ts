@@ -35,7 +35,7 @@ export function useAuth() {
     };
   }, []);
 
-  // Connexion avec OAuth (GitHub, Google, etc.)
+
   const signIn = async (provider: 'github' | 'google') => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider,
@@ -50,7 +50,7 @@ export function useAuth() {
     console.log('Redirecting to:', data.url);
   };
 
-  // Connexion avec email et mot de passe
+  
   const signInWithEmail = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
       email,

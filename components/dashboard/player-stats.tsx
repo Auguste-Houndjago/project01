@@ -17,7 +17,7 @@ export function PlayerStats() {
   const [loading, setLoading] = useState(true);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+const [playerId, setplayerId] = useState();
 
 
   useEffect(() => {
@@ -40,6 +40,28 @@ export function PlayerStats() {
     };
 
     fetchPlayers();
+  }, []);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch(`/api/players/${playerId}/statistics`);
+
+        if (!response.ok) {
+          throw new Error(`Erreur: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        setPlayers(data);
+      } catch (err: any) {
+        console.error("Erreur lors de la récupération des joueurs :", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
   }, []);
 
   return (
