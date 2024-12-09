@@ -183,7 +183,7 @@ export function AddManagerDialog({ open, onOpenChange }: AddManagerDialogProps) 
               name="profileImage"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>URL de l'image de profil</FormLabel>
+                  <FormLabel> URL de l'image de profil</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>

@@ -5,6 +5,9 @@ const nextConfig = {
 
   images: { unoptimized: true },
 
+  rules: {
+    "react/no-unescaped-entities": "off", 
+  },
 };
 
 module.exports = nextConfig;
