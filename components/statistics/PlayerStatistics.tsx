@@ -27,9 +27,12 @@ const PlayerStatistics: React.FC<PlayerStatisticsProps> = ({ playerId }) => {
   useEffect(() => {
 
     const fetchData = async () => {
+
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
       try {
-        const response = await fetch(`/api/players/${playerId}`);
-        const statistics = await fetch(`/api/players/${playerId}/statistics/`);
+
+        const response = await fetch(`${baseUrl}/api/players/${playerId}`);
+        const statistics = await fetch(`${baseUrl}/api/players/${playerId}/statistics/`);
 
         if (!statistics.ok) {
           throw new Error(`Error fetching statistics: ${response.status}`);

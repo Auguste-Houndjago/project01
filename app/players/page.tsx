@@ -21,8 +21,10 @@ export default function PlayersPage() {
 
   useEffect(() => {
     const fetchPlayers = async () => {
+            const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+
       try {
-        const response = await fetch("/api/players");
+        const response = await fetch( `${baseUrl}/api/players`);
 
         if (!response.ok) {
           throw new Error(`Erreur: ${response.statusText}`);

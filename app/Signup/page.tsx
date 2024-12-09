@@ -20,8 +20,9 @@ export default function Signup() {
 let user_id = "1e5d0971-f9b9-4114-a6c4-0193a1e4d180"
 
     const userId = user_id;  
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
-    const response = await fetch('/api/managers', {
+    const response = await fetch(`${baseUrl}/api/managers`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
