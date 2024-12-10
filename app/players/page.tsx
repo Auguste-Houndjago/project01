@@ -24,7 +24,7 @@ export default function PlayersPage() {
             const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
       try {
-        const response = await fetch( `${baseUrl}/api/players`);
+        const response = await fetch( `/api/players`);
 
         if (!response.ok) {
           throw new Error(`Erreur: ${response.statusText}`);
@@ -65,7 +65,7 @@ export default function PlayersPage() {
           {/* {players.map((player) => (
             <PlayerCard key={player.id} player={player} />
           ))} */}
-
+<h1>matching</h1>
           <PlayerList/>
           {/* <div>
             <h1>players list:</h1>
